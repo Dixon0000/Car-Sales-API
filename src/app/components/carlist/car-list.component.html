@@ -1,0 +1,28 @@
+<div class='container mt-3 mb-3'>
+  <button (click)="show = !show">{{show ? 'Hide' : 'Add a Car'}}</button>
+
+  <div *ngIf="show">
+    <form (submit)="addCar(make.value, model.value, year.value, imageUrl.value)">
+      <label>Make</label>
+      <input type="text" name="make" placeholder="Enter Make" #make>
+
+      <label>Model</label>
+      <input type="text" name="model" placeholder="Enter Model" #model>
+
+      <label>Year</label>
+      <input type="text" name="year" placeholder="Enter Year" #year>
+
+      <label>Image</label>
+      <input type="text" name="imageURL" placeholder="Enter Link to Image" #imageUrl>
+
+      <button class="btn btn-primary" type="submit">Add Car</button>
+    </form>
+  </div>
+</div>
+
+
+
+<div class='container'>
+  <app-car *ngFor="let carData of carsData" [carData]="carData" (carDeleted)="onDeleteCar($event)" (carEdited)="onEditCar($event)"></app-car>
+
+</div>

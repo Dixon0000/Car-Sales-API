@@ -1,0 +1,47 @@
+<div class='car-container mb-3'>
+  <ng-container *ngIf="!editing">
+    <div class='row border rounded p-3'>
+      <div class="col-2">
+        <strong>Make:</strong> {{carData.make}}
+      </div>
+      <div class="col-2">
+        <strong>Model:</strong> {{carData.model}}
+      </div>
+      <div class="col-2">
+        <strong>Year:</strong> {{carData.year}}
+      </div>
+      <div class="col-4">
+        <img src="{{carData.imageURL}}" [style.width.px]='carImageWidth' />
+      </div>
+      <div class="col-2 d-flex align-items-center">
+        <button class="btn btn-secondary mr-2" (click)="deleteCar(carData._id)">Delete</button>
+        <button class="btn btn-secondary" (click)="toggleEdit()">Edit</button>
+      </div>
+    </div>
+  </ng-container>
+
+  <form *ngIf="editing" (ngSubmit)="updateCar(make.value, model.value, year.value, imageUrl.value)">
+    <div class='row border rounded p-3'>
+      <div class="col-2">
+        <label>Make</label>
+        <input type="text" name="make" #make [value]="carData.make">
+      </div>
+      <div class="col-2">
+        <label>Model</label>
+        <input type="text" name="model" #model [value]="carData.model">
+      </div>
+      <div class="col-2">
+        <label>Year</label>
+        <input type="text" name="year" #year [value]="carData.year">
+      </div>
+      <div class="col-4">
+        <label>Image</label>
+        <input type="text" name="imageURL" #imageUrl [value]="carData.imageURL">
+      </div>
+      <div class="col-2 d-flex align-items-center">
+        <button class="btn btn-primary mr-2" type="submit">Save</button>
+        <button class="btn btn-secondary" (click)="toggleEdit()">Cancel</button>
+      </div>
+    </div>
+  </form>
+</div>
