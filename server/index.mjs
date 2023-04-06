@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import "./loadEnvironment.mjs"; // Add this line
+import "./loadEnvironment.mjs"; 
 import "express-async-errors";
 import posts from "./routes/posts.mjs";
 
@@ -11,6 +11,9 @@ app.use(cors());
 app.use(express.json());
 
 // Load the /posts routes
+app.get('/', (req, res) => {
+  res.send('Welcome to your API!');
+});
 app.use("/cars", posts);
 
 app.use((err, _req, res, next) => {

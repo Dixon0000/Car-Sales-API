@@ -4,47 +4,69 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
-// Get a list of 50 posts
+// Get a list of 50 cars
 router.get("/", async (req, res) => {
   let collection = (await db()).collection("cars");
   let results = await collection.find({})
     .limit(50)
     .toArray();
-  res.send(results).status(200);
+  res.status(200).send(results);
 });
 
-// Get a single post
+// Get a single car
 router.get("/:id", async (req, res) => {
-  let id=req.params.id
-  id=id.slice(1) //remove the colon at the start 
+  let id = req.params.id;
   let collection = (await db()).collection("cars");
-  let query = {_id: ObjectId(id)};
+  let query = { _id: ObjectId(id) };
 
   let result = await collection.findOne(query);
 
-  if (!result) res.send("Not found").status(404);
-  else res.send(result).status(200);
+  if (!result) res.status(404).send("Not found");
+  else res.status(200).send(result);
 });
 
-// Add a new document to the collection
+// Add a new car
 router.post("/", async (req, res) => {
   let collection = (await db()).collection("cars");
   let newDocument = req.body;
   newDocument.date = new Date();
-  let result = await collection.insertOne(newDocument);
-  res.send(result).status(204);
+  
+  try {
+    let result = await collection.findOneAndUpdate(
+      { _id: new ObjectId() },
+      { $set: newDocument },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    res.status(201).send(result.value);
+  } catch (err) {
+    console.log("Error inserting the new document:", err);
+    res.status(500).send("Error inserting the new document");
+  } finally {
+    if (!res.headersSent) {
+      res.status(500).send("An unexpected error occurred");
+    }
+  }
 });
-// Delete an entry
+
+// Delete a car by its ID
 router.delete("/:id", async (req, res) => {
-  let id=req.params.id
-  id=id.slice(1) //remove the colon at the start 
+  let id = req.params.id;
+  let collection = (await db()).collection("cars");
+  let query = { _id: ObjectId(id) };
 
-  const query = { _id: ObjectId(id) };
-
-  const collection = (await db()).collection("cars");
-  let result = await collection.deleteOne(query);
-
-  res.send(result).status(200);
+  try {
+    let result = await collection.deleteOne(query);
+    if (result.deletedCount === 1) {
+      res.status(200).send({ message: "Deleted successfully" });
+    } else {
+      res.status(404).send({ message: "Not found" });
+    }
+  } catch (err) {
+    console.log("Error deleting the document:", err);
+    res.status(500).send({ message: "Error deleting the document" });
+  }
 });
+
 
 export default router;
