@@ -20,31 +20,40 @@ export class CarListComponent implements OnInit {
   }
 
   getCars() {
-    this._carAPIService.getCarDetails().subscribe(carsData => {
+    this._carAPIService.getCarDetails().subscribe((carsData: ICar[]) => {
       this.carsData = carsData;
+    }, (error) => {
+      console.error("Error fetching cars data: ", error);
     });
   }
+  
 
   addCar(make: string, model: string, year: string, imageUrl: string): boolean {
     let addCar: ICar;
     addCar = new NewCar(make, model, year, imageUrl);
-    this._carAPIService.addCarDetails(addCar).subscribe(newCar => {
+    this._carAPIService.addCarDetails(addCar).subscribe((newCar: ICar) => {
       this.carsData.push(newCar);
+      this.getCars();
     });
-
+  
     return false;
   }
 
-  onDeleteCar(carId: string): void {
+  onDeleteCar(carId: string): boolean {
+    console.log(carId);
     this.deleteCar(carId);
-    this.carsData = this.carsData.filter((car: ICar) => car._id !== carId);
+    return false;
   }
 
+  
   deleteCar(carId: string): void {
     this._carAPIService.delCarDetails(carId).subscribe(result => {
       console.log(result);
+      // Update the carsData array only after a successful deletion
+      this.carsData = this.carsData.filter((car: ICar) => car._id !== carId);
     });
   }
+  
 
   onEditCar(updatedCar: ICar): void {
     const index = this.carsData.findIndex((car: ICar) => car._id === updatedCar._id);
@@ -52,4 +61,4 @@ export class CarListComponent implements OnInit {
       this.carsData[index] = updatedCar;
     }
   }
-}  
+}

@@ -18,11 +18,9 @@ export class CarComponent {
   constructor(private _carAPIService: CarApiService) {}
 
   deleteCar(carId: string) {
-    this._carAPIService.delCarDetails(carId).subscribe(result => {
-      console.log(result);
-      this.carDeleted.emit(carId);
-    });
+    this.carDeleted.emit(carId);
   }
+  
 
   toggleEdit() {
     this.editing = !this.editing;
